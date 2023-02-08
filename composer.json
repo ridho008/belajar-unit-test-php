@@ -25,6 +25,8 @@
         "phpunit/phpunit": "9.5.5"
     },
     "scripts": {
-        "test": "phpunit --configuration phpunit.xml"
+        "test": "phpunit --configuration phpunit.xml",
+        "test:product": "phpunit --configuration phpunit.xml --testsuite product",
+        "test:counter": "phpunit --configuration phpunit.xml --testsuite counter"
     }
 }

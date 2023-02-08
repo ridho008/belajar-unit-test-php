@@ -5,7 +5,15 @@
 
 <phpunit colors="true" stopOnError="true" verbose="true">
 	<testsuites>
-		<testsuite name="belajar">
+		<testsuite name="product">
+			<directory>test/ProductServiceMockTest.php</directory>
+			<directory>test/ProductServiceTest.php</directory>
+		</testsuite>
+		<testsuite name="counter">
+			<directory>test/CounterTest.php</directory>
+			<directory>test/CounterStaticTest.php</directory>
+		</testsuite>
+		<testsuite name="all">
 			<directory>test</directory>
 		</testsuite>
 	</testsuites>
