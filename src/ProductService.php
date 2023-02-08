@@ -18,14 +18,13 @@ class ProductService {
 		return $this->repository->save($product);
 	}
 
-	public function hapus(Product $product)
+	public function delete(string $id): void
 	{
-		if($this->repository->findById($product->getId() == null) ) {
-			// throw new \Exception('Product is already exists.');
-			// $this->repository->delete($product);
-			echo "berhasil";
+		$product = $this->repository->findById($id);
+		if($product == null) {
+			throw new \Exception('Product is not found.');
 		}
 
-
+		$this->repository->delete($product);
 	}
 }

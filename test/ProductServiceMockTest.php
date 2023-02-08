@@ -4,7 +4,7 @@ namespace Ridho\Test;
 
 use PHPUnit\Framework\TestCase;
 
-class ProductServiceTest extends TestCase {
+class ProductServiceMockTest extends TestCase {
 	private ProductRepository $repository;
 	private ProductService $service;
 
@@ -15,7 +15,7 @@ class ProductServiceTest extends TestCase {
 
 	protected function setUp(): void
 	{
-		$this->repository = $this->createStub(ProductRepository::class);
+		$this->repository = $this->createMock(ProductRepository::class);
 		$this->service = new ProductService($this->repository);
 		$this->product = new Product();
 	}
@@ -116,31 +116,67 @@ class ProductServiceTest extends TestCase {
 
 		// Aktualnya null
 		$this->repository->method("findById")->willReturn(null);
-		// $this->repository->method("delete")->willReturnArgument(0);
-
-		// $product = new Product();
-		// $product->setId("1");
-		// $product->setName("Contoh");
 
 		// Ekpetasi
-		$result = $this->service->delete("1");
+		$this->service->delete("1");
+	}
 
-		// self::assertSame($product->getId(), $result->getId());
-		// self::assertSame($product->getName(), $result->getName());
 
-		// $productInDB = new Product();
-		// $productInDB->setId("1");
+	// ******** Mock Object **********
+	public function testMock()
+	{
+		$product = new Product();
+		$product->setId("1");
 
-		// $this->repository->method("findById")->willReturn($productInDB);
-		// $this->repository->method("delete")->willReturnArgument("1");
+		// once, hanya bisa dipanggil sekali
+		$this->repository->expects(self::once())
+			->method("findById")
+			->willReturn($product);
 
-		// // $this->repository->method("findById")->willReturn($productInDB);
+		// bila $this->repository->findById("1") dipanggil 2x akan error
+		// $result = $this->repository->findById("1");
+		$result = $this->repository->findById("1");
+		self::assertSame($product, $result);
+	}
 
-		// $product = new Product();
-		// $product->setId("1");
+	public function testDeleteMockSuccess()
+	{
+		$product = new Product();
+		$product->setId("1");
 
-		// $result = $this->service->hapus($product);
 
-		// self::assertSame($product->getId(), $result->getId());
+		// dipanggil sekali dan tidak mengembalikan nilai, karena method delete : void
+		$this->repository->expects(self::once())
+			->method("delete")
+			->with(self::equalTo($product));
+
+
+		// Aktualnya idnya 1
+		// equalTo, parameter yang harus dikirim adalah 1
+		$this->repository->expects(self::once())
+			->method("findById")
+			->willReturn($product)
+			->with(self::equalTo("1"));
+
+		
+		$this->service->delete("1");
+
+		self::assertTrue(true, "Success deleted.");
+	}
+
+	public function testDeleteMockFailed()
+	{
+		$this->repository->expects(self::never())
+			->method("delete");
+		$this->expectException(\Exception::class);
+
+		// Aktualnya null
+		$this->repository->expects(self::once())
+			->method("findById")
+			->willReturn(null)
+			->with(self::equalTo("1"));
+
+		// Ekpetasi
+		$this->service->delete("1");
 	}
 }
